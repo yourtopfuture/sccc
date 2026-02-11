@@ -232,9 +232,9 @@
     const PercentageInput = ({ label, value, onChange, showHelp = false }) => {
       const handleChange = (e) => {
         const rawValue = e.target.value.replace(/[^0-9.]/g, '');
+        // Allow only one decimal point
         if ((rawValue.match(/\./g) || []).length > 1) return;
-        const numValue = rawValue === '' ? 0 : parseFloat(rawValue);
-        onChange(numValue);
+        onChange(rawValue);
       };
 
       return (
@@ -246,7 +246,7 @@
           <div className="relative flex items-center border-b border-slate-300 focus-within:border-[#c5a059] transition-colors pb-1">
             <input
               type="text"
-              value={value === 0 ? '' : value.toString()}
+              value={value}
               onChange={handleChange}
               placeholder="0"
               className="w-full outline-none text-xl text-slate-800 font-medium bg-transparent placeholder-slate-300"
@@ -263,7 +263,7 @@
       
       const [soldPrice, setSoldPrice] = useState(500000);
       const [legalFees, setLegalFees] = useState(1300);
-      const [commissionRate, setCommissionRate] = useState(5);
+      const [commissionRate, setCommissionRate] = useState('5');
 
       const resultsRef = useRef(null);
       const inputsRef = useRef(null);
@@ -300,6 +300,9 @@
         let buyingAgent = 0;
         let sellingAgent = 0;
         let taxRate = 0;
+        
+        // Use parsed rate
+        const rate = parseFloat(commissionRate) || 0;
 
         if (selectedProvince === 'ab') {
           if (soldPrice <= 100000) {
@@ -321,37 +324,37 @@
           sellingAgent = totalCommission - buyingAgent;
           taxRate = 0.05; 
         } else if (selectedProvince === 'mb') {
-          totalCommission = soldPrice * (commissionRate / 100);
+          totalCommission = soldPrice * (rate / 100);
           taxRate = 0.05; 
           buyingAgent = totalCommission / 2;
           sellingAgent = totalCommission / 2;
         } else if (selectedProvince === 'nb') {
-          totalCommission = soldPrice * (commissionRate / 100);
+          totalCommission = soldPrice * (rate / 100);
           taxRate = 0.15;
           buyingAgent = totalCommission / 2;
           sellingAgent = totalCommission / 2;
         } else if (selectedProvince === 'nl') {
-          totalCommission = soldPrice * (commissionRate / 100);
+          totalCommission = soldPrice * (rate / 100);
           taxRate = 0.15;
           buyingAgent = totalCommission / 2;
           sellingAgent = totalCommission / 2;
         } else if (selectedProvince === 'ns') {
-          totalCommission = soldPrice * (commissionRate / 100);
+          totalCommission = soldPrice * (rate / 100);
           taxRate = 0.15;
           buyingAgent = totalCommission / 2;
           sellingAgent = totalCommission / 2;
         } else if (selectedProvince === 'on') {
-          totalCommission = soldPrice * (commissionRate / 100);
+          totalCommission = soldPrice * (rate / 100);
           taxRate = 0.13;
           buyingAgent = totalCommission / 2;
           sellingAgent = totalCommission / 2;
         } else if (selectedProvince === 'pe') {
-          totalCommission = soldPrice * (commissionRate / 100);
+          totalCommission = soldPrice * (rate / 100);
           taxRate = 0.15;
           buyingAgent = totalCommission / 2;
           sellingAgent = totalCommission / 2;
         } else if (selectedProvince === 'qc') {
-          totalCommission = soldPrice * (commissionRate / 100);
+          totalCommission = soldPrice * (rate / 100);
           taxRate = 0.14975;
           buyingAgent = totalCommission / 2;
           sellingAgent = totalCommission / 2;
@@ -365,7 +368,7 @@
           buyingAgent = totalCommission / 2;
           sellingAgent = totalCommission / 2;
         } else {
-          totalCommission = soldPrice * (commissionRate / 100);
+          totalCommission = soldPrice * (rate / 100);
           taxRate = 0.13; 
           buyingAgent = totalCommission / 2;
           sellingAgent = totalCommission / 2;
